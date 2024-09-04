@@ -18,7 +18,7 @@ contract Aggregator is Ownable {
 
     ///@notice maximum allowed price data age
     uint256 public MAX_TIMESTAMP_DELAY_SECONDS = 60;
-    ///@notice maxumum allowed time between rounds, then getPrice reverts
+    ///@notice maxumum allowed time between rounds, then getPrice() reverts
     uint256 public MAX_EMA_STALE_SECONDS = 1200;
     ///@notice exponential moving average window in seconds
     int256 public EMA_WINDOW_SECONDS = 866; //600 / ln(2)
@@ -124,6 +124,6 @@ contract Aggregator is Ownable {
         uint256 _decimals = assetDetails[_asset].metaDecimals;
 
         //scale to 8 decimals and remove decimals from systemOracle
-        return _price * (10**8) / (10**(6 - _decimals)); 
+        return _price * (10**8) / (10**(6 - _decimals));
     }
 }
