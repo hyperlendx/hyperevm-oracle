@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import { Ownable } from "./utils/Ownable.sol";
+import { IAggregator } from "./interfaces/IAggregator.sol";
+
+contract Oracle is Ownable {
+    IAggregator public aggregator;
+
+    string public description;
+    uint256 public decimals;
+    address public asset;
+
+    constructor(string memory _description, uint256 _decimals, address _asset) Ownable(msg.sender) {
+        description = _description;
+        decimals = _decimals;
+        asset = _asset;
+    }
+
+    function latestAnswer() external returns (uint256) {
+        return aggregator.getPrice(asset);
+    }
+}
