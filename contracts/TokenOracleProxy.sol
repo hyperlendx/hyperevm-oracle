@@ -18,7 +18,7 @@ contract TokenOracleProxy is Ownable {
         asset = _asset;
     }
 
-    function latestAnswer() external returns (uint256) {
+    function latestAnswer() external view returns (uint256) {
         return aggregator.getPrice(asset);
     }
 }
