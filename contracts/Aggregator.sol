@@ -5,6 +5,8 @@ import { Ownable } from "./utils/Ownable.sol";
 import { FixedPointMathLib } from "./utils/FixedPointMathLib.sol";
 import { ISystemOracle } from "./interfaces/ISystemOracle.sol";
 
+import "hardhat/console.sol";
+
 ///@title Aggregator
 ///@author fbsloXBT
 ///@notice A price oracle aggregator for HyperEVM. 
@@ -65,7 +67,7 @@ contract Aggregator is Ownable {
 
     ///@notice modifier allowing only whitelisted keepers to call functions
     modifier onlyKeeper(){
-      require(keepers[msg.sender], "only keepers");
+      require(keepers[msg.sender] || msg.sender == owner(), "only keepers");
       _;
     }
 
@@ -117,13 +119,20 @@ contract Aggregator is Ownable {
         emit AssetChanged(_asset, _isPerpOracle, _metaIndex, _metaDecimals, _price, _isUpdate);
     }
 
+    ///@notice function used to add or oremove keepers
+    ///@param _keeper address of the keeper
+    function toggleKeeper(address _keeper) external onlyOwner() {
+        keepers[_keeper] = !keepers[_keeper];
+        emit KeeperUpdated(_keeper, keepers[_keeper]);
+    }
+
     ///@notice function used to submit a batch of prices
     ///@param _assets array of addresses for assets
     ///@param _prices array of prices for assets (must be in the same order as _assets)
     ///@param _submitTimestamp unix timestamp (in seconds) when transaction was sent by the keeper
     ///@dev prices must be scaled to 8 decimals before they are submitted
     function submitRoundData(address[] calldata _assets, uint256[] calldata _prices, uint256 _submitTimestamp) external onlyKeeper() {
-        require(block.timestamp < _submitTimestamp + MAX_TIMESTAMP_DELAY_SECONDS, "submitRoundData: expired");
+        require(block.timestamp - _submitTimestamp < MAX_TIMESTAMP_DELAY_SECONDS, "submitRoundData: expired");
         require(_assets.length == _prices.length, "submitRoundData: length mismatch");
 
         for (uint256 i = 0; i < _assets.length; i++){
@@ -131,13 +140,6 @@ contract Aggregator is Ownable {
         }
 
         emit RoundDataSubmitted(_assets, _prices, block.timestamp);
-    }
-
-    ///@notice function used to add or oremove keepers
-    ///@param _keeper address of the keeper
-    function toggleKeeper(address _keeper) external onlyOwner() {
-        keepers[_keeper] = !keepers[_keeper];
-        emit KeeperUpdated(_keeper, keepers[_keeper]);
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/

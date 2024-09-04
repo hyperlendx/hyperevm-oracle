@@ -7,7 +7,7 @@ module.exports = {
     networks: {
         hlTest: {
             accounts: [process.env.PRIVATE_KEY],
-            chainId: chainIds.hyperEvmTestnet,
+            chainId: 998,
             url: "https://api.hyperliquid-testnet.xyz/evm", 
         }
     }
