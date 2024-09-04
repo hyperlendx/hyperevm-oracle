@@ -4,14 +4,15 @@ pragma solidity ^0.8.20;
 import { Ownable } from "./utils/Ownable.sol";
 import { IAggregator } from "./interfaces/IAggregator.sol";
 
-contract Oracle is Ownable {
+contract TokenOracleProxy is Ownable {
     IAggregator public aggregator;
 
     string public description;
     uint256 public decimals;
     address public asset;
 
-    constructor(string memory _description, uint256 _decimals, address _asset) Ownable(msg.sender) {
+    constructor(address _aggregator, string memory _description, uint256 _decimals, address _asset) Ownable(msg.sender) {
+        aggregator = IAggregator(_aggregator);
         description = _description;
         decimals = _decimals;
         asset = _asset;
