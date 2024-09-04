@@ -5,7 +5,7 @@ async function main() {
 
   await aggregator.waitForDeployment();
 
-  console.log(`Aggregator deployed to ${aggregator.address}`);
+  console.log(`Aggregator deployed to ${aggregator.target}`);
   console.log(aggregator)
 }
 

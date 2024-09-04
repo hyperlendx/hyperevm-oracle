@@ -5,8 +5,6 @@ import { Ownable } from "./utils/Ownable.sol";
 import { FixedPointMathLib } from "./utils/FixedPointMathLib.sol";
 import { ISystemOracle } from "./interfaces/ISystemOracle.sol";
 
-import "hardhat/console.sol";
-
 ///@title Aggregator
 ///@author fbsloXBT
 ///@notice A price oracle aggregator for HyperEVM. 
