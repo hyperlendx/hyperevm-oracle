@@ -8,3 +8,8 @@ Otherwise, keepers must submit data ever round
 
 - round frequency: 60 seconds or when price moves by X%
 
+---
+
+Aggregator.sol - collects data from SystemOracle or data submitted by the keepers.
+
+TokenOracleProxy.sol - exposes a chainlink-compatible interface for a certain token

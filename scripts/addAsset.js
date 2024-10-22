@@ -3,17 +3,17 @@ const hre = require("hardhat");
 async function main() {
     const aggregator = await hre.ethers.getContractAt("Aggregator", "0x824A4309686C74C3369Ab2273A6f2ced629422e2");
 
-    const _asset = '0xb767Eb6b863267F348F9ea462dfDA31365849A30' //mockBTC
+    const _asset = '0xe0bdd7e8b7bf5b15dcDA6103FCbBA82a460ae2C7'
     const _isPerpOracle = true
-    const _metaIndex = 3
-    const _metaDecimals = 5
+    const _metaIndex = 4
+    const _metaDecimals = 4
     const _price = 0
-    const _isUpdate = false
+    const _isUpdate = true
 
-//   await aggregator.setAsset(_asset, _isPerpOracle, _metaIndex, _metaDecimals, _price, _isUpdate)
+    await aggregator.setAsset(_asset, _isPerpOracle, _metaIndex, _metaDecimals, _price, _isUpdate)
 
     console.log(await aggregator.getPrice(_asset))
-    const proxy = await hre.ethers.getContractAt("TokenOracleProxy", "0x9566cfCC8C286ef881CC0869E381D24E8A3877f2");
+    const proxy = await hre.ethers.getContractAt("TokenOracleProxy", "0xc88F13B22443E6dDe99bc702F0130A8edee45174");
     console.log(await proxy.description())
     console.log(await proxy.decimals())
     console.log(await proxy.asset())

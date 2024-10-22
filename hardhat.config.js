@@ -5,7 +5,7 @@ require("dotenv").config();
 module.exports = {
     solidity: "0.8.20",
     networks: {
-        hlTest: {
+        hyperEvmTestnet: {
             accounts: [process.env.PRIVATE_KEY],
             chainId: 998,
             url: "https://api.hyperliquid-testnet.xyz/evm", 
