@@ -41,7 +41,7 @@ contract Aggregator is Ownable {
         uint256 lastTimestamp;
     }
 
-    ///@notice mapping of all Hyperliquid system oracle indexes to asset address
+    ///@notice mapping of Hyperliquid system oracle indexes to asset address
     mapping(uint256 => address) public metaIndexes;
     ///@notice mapping of asset addresses to details
     mapping(address => AssetDetails) public assetDetails;
