@@ -147,8 +147,10 @@ contract Aggregator is Ownable {
     ///@notice helper function used to calculate new EMA when price is added
     ///@dev we are using calculation for unevenly spaced time series
     function _calculateEma(address _asset, uint256 _price) internal {
-        uint256 lastTimestamp = assetDetails[_asset].lastTimestamp;
-        uint256 currentEma = assetDetails[_asset].ema;
+        AssetDetails memory assetInfo = assetDetails[_asset];
+
+        uint256 lastTimestamp = assetInfo.lastTimestamp;
+        uint256 currentEma = assetInfo.ema;
 
         //Andreas Eckner (2010): Algorithms for Unevenly Spaced Time Series: Moving Averages and Other Rolling Operators
         int256 x = -int256(int256(block.timestamp - lastTimestamp) * 10**18 / EMA_WINDOW_SECONDS);
@@ -161,11 +163,13 @@ contract Aggregator is Ownable {
 
     ///@notice helper function used to fetch perp-oracle price from SystemOracle
     function _getPerpOraclePrice(address _asset) internal view returns (uint256) {
+        AssetDetails memory assetInfo = assetDetails[_asset];
+
         uint256[] memory oraclePrices = systemOracle.getOraclePxs();
-        uint256 _metaIndex = assetDetails[_asset].metaIndex;
+        uint256 _metaIndex = assetInfo.metaIndex;
 
         uint256 _price = oraclePrices[_metaIndex];
-        uint256 _decimals = assetDetails[_asset].metaDecimals;
+        uint256 _decimals = assetInfo.metaDecimals;
 
         //scale to 8 decimals and remove decimals from systemOracle
         return _price * (10**8) / (10**(6 - _decimals));
