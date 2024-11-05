@@ -28,3 +28,9 @@ Build & Tests
 `npx hardhat compile`
 
 `npx hardhat test`
+
+---
+
+Note that in order to test reading any data from the SystemOracle, you should use `hyperEvmTestnet` fork (but `fixture` won't work).
+
+`npx hardhat test test/baseTest.js --network hyperEvmTestnet`
