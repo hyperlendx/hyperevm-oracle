@@ -19,7 +19,7 @@ contract Aggregator is Ownable {
     /*                         CONSTANTS                          */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-    ///@notice maximum allowed price data age
+    ///@notice maximum allowed age of the price data submitted by keepers
     uint256 public MAX_TIMESTAMP_DELAY_SECONDS = 60;
     ///@notice maxumum allowed time between rounds, then getPrice() reverts
     uint256 public MAX_EMA_STALE_SECONDS = 1200;
@@ -80,12 +80,27 @@ contract Aggregator is Ownable {
     function getPrice(address _asset) external view returns (uint256){
         require(assetDetails[_asset].exists == true, "getPrice: asset not found");
 
-        if (assetDetails[_asset].isPerpOracle){
-            //return perp oracle data from SystemOracle
+        AssetDetails memory _assetInfo = assetDetails[_asset];
+
+        if (_assetInfo.isPerpOracle){
             return _getPerpOraclePrice(_asset);
         } else {
-            require(block.timestamp - assetDetails[_asset].lastTimestamp < MAX_EMA_STALE_SECONDS, "getPrice: stale EMA price");
-            return assetDetails[_asset].ema;
+            require(block.timestamp - _assetInfo.lastTimestamp < MAX_EMA_STALE_SECONDS, "getPrice: stale EMA price");
+            return _assetInfo.ema;
+        }
+    }
+
+    /// @notice function used to read the timestamp of the last price update for a certain asset
+    /// @dev for perp assets, it returns block.timestamp
+    function getUpdateTimestamp(address _asset) external view returns (uint256){
+        require(assetDetails[_asset].exists == true, "getPrice: asset not found");
+
+        AssetDetails memory _assetInfo = assetDetails[_asset];
+
+        if (_assetInfo.isPerpOracle){
+            return block.timestamp;
+        } else {
+            return _assetInfo.lastTimestamp;
         }
     }
 
@@ -102,6 +117,7 @@ contract Aggregator is Ownable {
     function setAsset(address _asset, bool _isPerpOracle, uint32 _metaIndex, uint32 _metaDecimals, uint256 _price, bool _isUpdate) external onlyOwner() {
         if (!_isUpdate) {
             require(assetDetails[_asset].exists == false, "asset already exists");
+            require(metaIndexes[_metaIndex] == address(0), "metaindex already exists");
         }
 
         assetDetails[_asset] = AssetDetails({
@@ -134,6 +150,7 @@ contract Aggregator is Ownable {
         require(_assets.length == _prices.length, "submitRoundData: length mismatch");
 
         for (uint256 i = 0; i < _assets.length; i++){
+            //even if the asset is not added yet, we can write the price, since reading it will revert
             _calculateEma(_assets[i], _prices[i]);
         }
 
@@ -172,6 +189,7 @@ contract Aggregator is Ownable {
         uint256 _decimals = assetInfo.metaDecimals;
 
         //scale to 8 decimals and remove decimals from systemOracle
+        //https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/evm/system-contract
         return _price * (10**8) / (10**(6 - _decimals));
     }
 }

@@ -5,10 +5,10 @@ import { Ownable } from "./utils/Ownable.sol";
 import { IAggregator } from "./interfaces/IAggregator.sol";
 import { ITokenOracleProxy } from "./interfaces/ITokenOracleProxy.sol";
 
-///@title TokenOracleProxy
+///@title AssetOracleProxy
 ///@author fbsloXBT
 ///@notice An oracle proxy exposing price for a certain asset
-contract TokenOracleProxy is Ownable, ITokenOracleProxy {
+contract AssetOracleProxy is Ownable, ITokenOracleProxy {
     /// @notice aggregator contract collecting price data from different sources
     IAggregator public aggregator;
 
@@ -42,11 +42,13 @@ contract TokenOracleProxy is Ownable, ITokenOracleProxy {
         uint256 startedAt,
         uint256 updatedAt,
         uint80 answeredInRound
-    ){
+    ){  
+        uint256 lastUpdate = aggregator.getUpdateTimestamp(asset);
+        
         roundId = 0;
         answer = int256(aggregator.getPrice(asset));
-        startedAt = block.timestamp;
-        updatedAt = block.timestamp;
+        startedAt = lastUpdate;
+        updatedAt = lastUpdate;
         answeredInRound = 0;
     }
 }
