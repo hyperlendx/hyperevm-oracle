@@ -117,7 +117,7 @@ contract Aggregator is Ownable {
     function setAsset(address _asset, bool _isPerpOracle, uint32 _metaIndex, uint32 _metaDecimals, uint256 _price, bool _isUpdate) external onlyOwner() {
         if (!_isUpdate) {
             require(assetDetails[_asset].exists == false, "setAsset: asset already exists");
-            require(metaIndexes[_metaIndex] == address(0), "setAsset: metaindex already exists");
+            require(metaIndexes[_metaIndex] == address(0), "setAsset: metaIndex already exists");
         }
 
         assetDetails[_asset] = AssetDetails({
@@ -128,6 +128,7 @@ contract Aggregator is Ownable {
             ema: _price,
             lastTimestamp: block.timestamp
         });
+        //if asset is not a perp, we can use any (unused) random high number for metaIndex
         metaIndexes[_metaIndex] = _asset;
 
         emit AssetChanged(_asset, _isPerpOracle, _metaIndex, _metaDecimals, _price, _isUpdate);
