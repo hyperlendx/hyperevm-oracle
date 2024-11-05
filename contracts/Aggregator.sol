@@ -20,9 +20,9 @@ contract Aggregator is Ownable {
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
     ///@notice maximum allowed age of the price data submitted by keepers
-    uint256 public MAX_TIMESTAMP_DELAY_SECONDS = 60;
+    uint256 public MAX_TIMESTAMP_DELAY_SECONDS = 1 minutes;
     ///@notice maxumum allowed time between rounds, then getPrice() reverts
-    uint256 public MAX_EMA_STALE_SECONDS = 1200;
+    uint256 public MAX_EMA_STALE_SECONDS = 20 minutes;
     ///@notice exponential moving average window in seconds
     int256 public EMA_WINDOW_SECONDS = 866; //600 / ln(2)
 
