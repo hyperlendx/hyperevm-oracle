@@ -51,35 +51,23 @@
 ## getPrice Tests
 1. Basic Functionality
    - [x] Should revert for non-existent assets
-   - Should return correct price for perp-oracle assets
+   - [] Should return correct price for perp-oracle assets
    - [x] Should return correct EMA for non-perp-oracle assets
+   - [x] Should revert if EMA is stale for non-perp assets (> MAX_EMA_STALE_SECONDS)
 
 2. Perp-Oracle Assets
-   - Should correctly scale prices based on metaDecimals
-   - Should handle different decimal configurations
-   - Should correctly read from SystemOracle
-   - Should handle edge cases in SystemOracle data
-
-3. Non-Perp-Oracle Assets
-   - Should return latest EMA value
-   - Should revert if EMA is stale (> MAX_EMA_STALE_SECONDS)
-   - Should handle edge cases in EMA values
+   - [] Should correctly scale prices based on metaDecimals
+   - [] Should handle different decimal configurations
+   - [] Should correctly read from SystemOracle
 
 ## getUpdateTimestamp Tests
 1. Basic Functionality
-   - Should revert for non-existent assets
-   - Should return block.timestamp for perp-oracle assets
-   - Should return lastTimestamp for non-perp-oracle assets
+   - [x] Should revert for non-existent assets
+   - [x] Should return block.timestamp for perp-oracle assets
+   - [x] Should return lastTimestamp for non-perp-oracle assets
 
-# Edge Cases and Security Tests
+# Edge Cases
 1. Boundary Conditions
-   - Should handle zero prices
-   - Should handle maximum possible prices
-   - Should handle extreme time delays between updates
-   - Should handle maximum possible metaIndex values
-
-2. Security Considerations
-   - Should maintain correct access control across all functions
-   - Should handle potential overflow in EMA calculations
-   - Should verify SystemOracle integration security
-   - Should handle potential front-running scenarios
+   - [x] Should handle zero prices
+   - [x] Should handle maximum possible prices (10B USD @ 8 decimals)
+   - [x] Should handle extreme time delays between updates

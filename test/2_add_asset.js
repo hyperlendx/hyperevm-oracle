@@ -75,7 +75,7 @@ describe("Aggregator-AddAsset", function () {
         const isUpdate = false;
 
         await aggregator.setAsset(asset, isPerpOracle, metaIndex, metaDecimals, price, isUpdate)
-        await expect(aggregator.setAsset(asset, isPerpOracle, metaIndex, metaDecimals, price, isUpdate)).to.be.revertedWith("asset already exists")
+        await expect(aggregator.setAsset(asset, isPerpOracle, metaIndex, metaDecimals, price, isUpdate)).to.be.revertedWith("setAsset: asset already exists")
     });
 
     it("should update asset", async function () {

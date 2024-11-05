@@ -93,7 +93,7 @@ contract Aggregator is Ownable {
     /// @notice function used to read the timestamp of the last price update for a certain asset
     /// @dev for perp assets, it returns block.timestamp
     function getUpdateTimestamp(address _asset) external view returns (uint256){
-        require(assetDetails[_asset].exists == true, "getPrice: asset not found");
+        require(assetDetails[_asset].exists == true, "getUpdateTimestamp: asset not found");
 
         AssetDetails memory _assetInfo = assetDetails[_asset];
 
@@ -116,8 +116,8 @@ contract Aggregator is Ownable {
     ///@param _isUpdate indicates if asset is being added or updated
     function setAsset(address _asset, bool _isPerpOracle, uint32 _metaIndex, uint32 _metaDecimals, uint256 _price, bool _isUpdate) external onlyOwner() {
         if (!_isUpdate) {
-            require(assetDetails[_asset].exists == false, "asset already exists");
-            require(metaIndexes[_metaIndex] == address(0), "metaindex already exists");
+            require(assetDetails[_asset].exists == false, "setAsset: asset already exists");
+            require(metaIndexes[_metaIndex] == address(0), "setAsset: metaindex already exists");
         }
 
         assetDetails[_asset] = AssetDetails({

@@ -57,6 +57,47 @@ describe("Aggregator-ReadPrice", function () {
     //     )
 
     //     await aggregator.setAsset(asset, true, 0, 2, "0", false)
-    //     expect(await aggregator.getPrice(asset)).to.equal("100000000")
+    //     expect(await aggregator.getPrice(asset)).to.be.above("0")
     // });
+
+    it("should revert: stale non-perp asset", async function () {
+        const { aggregator, keeper, user } = await loadFixture(deploy);
+
+        const stalePriceTime = await aggregator.MAX_EMA_STALE_SECONDS()
+        await time.increase(stalePriceTime)
+
+        await expect(
+            aggregator.getPrice("0x0000000000000000000000000000000000000024")
+        ).to.be.revertedWith("getPrice: stale EMA price")
+    });
+
+    it("should revert: getUpdateTimestamp for non-existent asset", async function () {
+        const { aggregator, keeper, user } = await loadFixture(deploy);
+
+        await expect(
+            aggregator.getUpdateTimestamp("0x0000000000000000000000000000000000000000")
+        ).to.be.revertedWith("getUpdateTimestamp: asset not found")
+    });
+
+    it("should return block.timestamp in getUpdateTimestamp for perp asset", async function () {
+        const { aggregator, keeper, user } = await loadFixture(deploy);
+
+        await aggregator.setAsset("0x0000000000000000000000000000000000000077", true, 2, 0, "0", false)
+
+        const lastTimestamp = await time.latest();
+        expect(await aggregator.getUpdateTimestamp("0x0000000000000000000000000000000000000077")).to.equal(lastTimestamp)
+    });
+
+    it("should return lastTimestamp in getUpdateTimestamp for perp asset", async function () {
+        const { aggregator, keeper, user } = await loadFixture(deploy);
+        const asset = "0x0000000000000000000000000000000000000024"
+        const price = "100000000"
+        const beforeSubmitTimestamp = await time.latest();
+        await aggregator.connect(keeper).submitRoundData([asset], [price], beforeSubmitTimestamp)
+
+        const afterSubmitTimestamp = await time.latest();
+        const details = await aggregator.assetDetails(asset)
+        expect(await aggregator.getUpdateTimestamp(asset)).to.equal(details.lastTimestamp)
+        expect(await aggregator.getUpdateTimestamp(asset)).to.equal(afterSubmitTimestamp)
+    });
 });

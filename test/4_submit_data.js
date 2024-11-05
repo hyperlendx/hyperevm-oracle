@@ -34,6 +34,7 @@ describe("Aggregator-SubmitData", function () {
         const timestamp = parseFloat(new Date().getTime() / 1000).toFixed(0)
         await expect(aggregator.connect(keeper).submitRoundData([asset], [price], timestamp))
             .to.emit(aggregator, "RoundDataSubmitted")
+            .withArgs([asset], [price], anyValue)
 
         expect(await aggregator.getPrice(asset)).to.be.above("0")
         expect(await aggregator.getUpdateTimestamp(asset)).to.be.above(timestamp)

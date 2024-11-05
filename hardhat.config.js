@@ -9,6 +9,9 @@ module.exports = {
             accounts: [process.env.PRIVATE_KEY],
             chainId: 998,
             url: "https://api.hyperliquid-testnet.xyz/evm", 
+            forking: {
+                url: "https://api.hyperliquid-testnet.xyz/evm",
+            }
         }
     },
     etherscan: {
@@ -17,13 +20,13 @@ module.exports = {
         },
         customChains: [
             {
-              network: "hyperEvmTestnet",
-              chainId: 998,
-              urls: {
-                apiURL: "https://explorer.hyperlend.finance/api",
-                browserURL: "https://explorer.hyperlend.finance"
-              }
+                network: "hyperEvmTestnet",
+                chainId: 998,
+                urls: {
+                    apiURL: "https://explorer.hyperlend.finance/api",
+                    browserURL: "https://explorer.hyperlend.finance"
+                }
             }
-          ]
-      },
+        ]
+    },
 };
