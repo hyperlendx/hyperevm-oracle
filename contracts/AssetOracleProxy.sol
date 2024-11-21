@@ -43,7 +43,10 @@ contract AssetOracleProxy is Ownable, ITokenOracleProxy {
         uint256 updatedAt,
         uint80 answeredInRound
     ){  
-        uint256 lastUpdate = aggregator.getUpdateTimestamp(asset);
+        uint256 lastUpdate = block.timestamp;
+        try aggregator.getUpdateTimestamp(asset) returns (uint256 l) {
+            lastUpdate = l;
+        } catch { }
         
         roundId = 0;
         answer = int256(aggregator.getPrice(asset));

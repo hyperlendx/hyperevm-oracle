@@ -13,15 +13,15 @@ async function verify(address, args, libraries){
 
     try {
         console.log(`verifying ${address} with args: ${args}`);
-        // await storeVerificationData(
-        //     path.resolve(__dirname, `../markets/deployments/verifications`),
-        //     path.resolve(__dirname, `../markets/deployments/verifications/${address}.json`),
-        //     JSON.stringify(params, null, 4)
-        // );
+        await storeVerificationData(
+            path.resolve(__dirname, `./verifications`),
+            path.resolve(__dirname, `./verifications/${address}.json`),
+            JSON.stringify(params, null, 4)
+        );
         await hre.run("verify:verify", params);
     } catch (e) {
         console.log(`verification failed`);
-        console.log(e);
+        console.log(e.message);
     }
 }
 
