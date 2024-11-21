@@ -12,7 +12,7 @@ contract AssetOracleProxy is Ownable, ITokenOracleProxy {
     /// @notice aggregator contract collecting price data from different sources
     IAggregator public aggregator;
 
-   /// @notice the description of the price source
+    /// @notice the description of the price source
     string public description;
     /// @notice the number of decimals the aggregator responses represent
     uint256 public decimals;
