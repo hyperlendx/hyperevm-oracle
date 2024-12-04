@@ -158,6 +158,12 @@ contract Aggregator is Ownable {
         emit RoundDataSubmitted(_assets, _prices, block.timestamp);
     }
 
+    function deleteAsset(address _asset) external onlyOwner() {
+        require(assetDetails[_asset].exists, "deleteAsset: asset doesn't exist");
+        assetDetails[_asset].exists = false;
+    }
+
+
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                   INTERNAL HELPERS                         */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
