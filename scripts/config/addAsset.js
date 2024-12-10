@@ -10,11 +10,11 @@ async function main() {
     // const _price = 0
     // const _isUpdate = true
 
-    const _asset = '0x4D6b8f9518b0b92080b5eAAf80bD505734A059Ae'
-    const _isPerpOracle = false
-    const _metaIndex = 0
-    const _metaDecimals = 0
-    const _price = 420700000
+    const _asset = '0x0000000000000000000000000000000000000001'
+    const _isPerpOracle = true
+    const _metaIndex = 135
+    const _metaDecimals = 2
+    const _price = 1
     const _isUpdate = false
 
     await aggregator.setAsset(_asset, _isPerpOracle, _metaIndex, _metaDecimals, _price, _isUpdate)

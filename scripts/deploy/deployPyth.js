@@ -3,7 +3,7 @@ const hre = require("hardhat");
 const { verify } = require("../utils/verify")
 
 async function main(pythContract, description, asset, priceFeedId) {
-    const proxy = await hre.ethers.deployContract("PythOracleProxy", [
+    const proxy = await hre.ethers.deployContract("PythOracleAdapter", [
         pythContract, description, asset, priceFeedId
     ]);
 

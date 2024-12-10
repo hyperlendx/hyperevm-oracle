@@ -3,7 +3,7 @@ const hre = require("hardhat");
 const { verify } = require("../utils/verify")
 
 async function main(aggregator, name, decimals, asset) {
-    const proxy = await hre.ethers.deployContract("AssetOracleProxy", [
+    const proxy = await hre.ethers.deployContract("AssetOracleAdapter", [
         aggregator, //aggregator
         name, decimals, 
         asset //asset

@@ -116,6 +116,7 @@ Asset Meta Indexes on HyperEVM testnet
 113, raw px: 3995, name: MEW, decimals: 0, px: 0.003995
 114, raw px: 4819900, name: RENDER, decimals: 0, px: 4.8199
 115, raw px: 1038500, name: kDOGS, decimals: 0, px: 1.0385
+135, raw px: 2045000, name: HYPE, decimals: 2, px: 20450000000
 
 ```
 const { Web3 } = require('web3')
