@@ -7,8 +7,8 @@ contract MockERC4626 {
     using Math for uint256;
 
     uint256 public decimals = 18;
-    uint256 public totalAssets = 1029977589325867440;
-    uint256 public totalSupply = 11741947194717491;
+    uint256 public totalAssets = 1020000000000000000;
+    uint256 public totalSupply = 1000000000000000000;
 
     function setDecimals(uint256 _new) external {
         decimals = _new;

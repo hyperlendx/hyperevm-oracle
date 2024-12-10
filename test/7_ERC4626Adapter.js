@@ -36,7 +36,8 @@ describe("ERC4626Adapter", function () {
 
         const expectedPrice = Number(await mockPriceProvider.price()) * Number(assetsPerBaseShare) / Number(baseShare);
         const expectedPriceRoundedDown = Math.floor(expectedPrice).toFixed(0);
+        const expectedPriceRoundedDownMinusOne = (Number(expectedPriceRoundedDown) - 1).toString(); //ERC4626 rounds down
 
-        expect(answer.toString()).to.equal(expectedPriceRoundedDown)
+        expect(answer.toString()).to.be.oneOf([expectedPriceRoundedDown, expectedPriceRoundedDownMinusOne])
     });
 });

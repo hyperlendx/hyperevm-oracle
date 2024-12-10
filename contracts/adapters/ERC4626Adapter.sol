@@ -63,9 +63,11 @@ contract ERC4626Adapter is Ownable, ITokenOracleProxy {
             uint80 _answeredInRound
         ) = priceProvider.latestRoundData();
 
+        //get assets per 1 vault token (accounting for decimals)
         uint256 baseShareAmount = 10 ** asset.decimals();
         uint256 assetPerBaseShare = asset.convertToAssets(baseShareAmount);
 
+        //calculate the price of 1 vault token
         answer = _answer * int256(assetPerBaseShare) / int256(baseShareAmount);
 
         roundId = _roundId;
