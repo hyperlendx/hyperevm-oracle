@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
 import "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
  
-///@title PythOracleProxy
+///@title PythOracleAdapter
 ///@author fbsloXBT
 ///@notice Pyth oracle adapter
-contract PythOracleProxy {
+contract PythOracleAdapter {
     /// @notice pyth oracle contract on the HyperEVM chain
     IPyth pyth;
 

@@ -10,23 +10,23 @@ const mainnetConfig = {
     assets: [
         {   
             oracleType: "hl",
-            symbol: "ETH",
-            contract: "0xADcb2f358Eae6492F61A5F87eb8893d09391d160",
+            symbol: "BTC",
+            contract: "0x453b63484b11bbF0b61fC7E854f8DAC7bdE7d458",
             isPerp: true,
-            metaIndex: 4,
-            metaDecimals: 4,
+            metaIndex: 3,
+            metaDecimals: 5,
             price: 0,
             isUpdate: false,
             oracleDecimals: 8,
-            oracleName: "ETH/USD-HL",
+            oracleName: "BTC/USD-HL",
         },
-        {   
-            oracleType: "pyth",
-            symbol: "DOGE",
-            contract: "0xADcb2f358Eae6492F61A5F87eb8893d09391d160",
-            oracleName: "DOGE/USD-PYTH",
-            pythPriceFeedId: "0xdcef50dd0a4cd2dcc17e45df1676dcb336a11a61c69df7a0299b0150c672d25c"
-        }
+        // {   
+        //     oracleType: "pyth",
+        //     symbol: "DOGE",
+        //     contract: "0xADcb2f358Eae6492F61A5F87eb8893d09391d160",
+        //     oracleName: "DOGE/USD-PYTH",
+        //     pythPriceFeedId: "0xdcef50dd0a4cd2dcc17e45df1676dcb336a11a61c69df7a0299b0150c672d25c"
+        // }
     ]
 }
 

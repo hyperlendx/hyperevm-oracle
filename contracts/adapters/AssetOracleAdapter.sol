@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import { Ownable } from "./utils/Ownable.sol";
-import { IAggregator } from "./interfaces/IAggregator.sol";
-import { ITokenOracleProxy } from "./interfaces/ITokenOracleProxy.sol";
+import { Ownable } from "../utils/Ownable.sol";
+import { IAggregator } from "../interfaces/IAggregator.sol";
+import { ITokenOracleProxy } from "../interfaces/ITokenOracleProxy.sol";
 
-///@title AssetOracleProxy
+///@title AssetOracleAdapter
 ///@author fbsloXBT
 ///@notice An oracle proxy exposing price for a certain asset
-contract AssetOracleProxy is Ownable, ITokenOracleProxy {
+contract AssetOracleAdapter is Ownable, ITokenOracleProxy {
     /// @notice aggregator contract collecting price data from different sources
     IAggregator public aggregator;
 
