@@ -32,9 +32,9 @@ contract ERC4626Adapter is Ownable, ITokenOracleProxy {
     }
 
     /// @notice returns the latest price
-    function latestAnswer() external view returns (uint256) {
+    function latestAnswer() external view returns (int256) {
         ( , int256 answer , , , ) = getData();
-        return uint256(answer);
+        return answer;
     }
 
     /// @notice returns the latest price in chainlink-compatible format 

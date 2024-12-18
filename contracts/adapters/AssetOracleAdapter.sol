@@ -31,8 +31,8 @@ contract AssetOracleAdapter is Ownable, ITokenOracleProxy {
     }
 
     /// @notice returns the latest price from the aggregator
-    function latestAnswer() external view returns (uint256) {
-        return aggregator.getPrice(asset);
+    function latestAnswer() external view returns (int256) {
+        return int256(aggregator.getPrice(asset));
     }
 
     /// @notice returns the latest price in chainlink-compatible format 
