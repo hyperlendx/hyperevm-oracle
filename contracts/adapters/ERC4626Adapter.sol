@@ -3,14 +3,14 @@ pragma solidity ^0.8.20;
 
 import { Ownable } from "../utils/Ownable.sol";
 import { IAggregator } from "../interfaces/IAggregator.sol";
-import { ITokenOracleProxy } from "../interfaces/ITokenOracleProxy.sol";
+import { IAdapter } from "../interfaces/IAdapter.sol";
 import { IOracle } from "../interfaces/IOracle.sol";
 import { IERC4626 } from "../interfaces/IERC4626.sol";
 
 ///@title ERC4626Adapter
 ///@author fbsloXBT
 ///@notice An adapter returning price of ERC4626 vault share, based on underlying asset price & share value
-contract ERC4626Adapter is Ownable, ITokenOracleProxy {
+contract ERC4626Adapter is Ownable, IAdapter {
     /// @notice contract providing price of the underlying asset
     IOracle public priceProvider;
 

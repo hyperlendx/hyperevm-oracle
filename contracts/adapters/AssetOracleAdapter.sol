@@ -3,19 +3,19 @@ pragma solidity ^0.8.20;
 
 import { Ownable } from "../utils/Ownable.sol";
 import { IAggregator } from "../interfaces/IAggregator.sol";
-import { ITokenOracleProxy } from "../interfaces/ITokenOracleProxy.sol";
+import { IAdapter } from "../interfaces/IAdapter.sol";
 
 ///@title AssetOracleAdapter
 ///@author fbsloXBT
 ///@notice An oracle proxy exposing price for a certain asset
-contract AssetOracleAdapter is Ownable, ITokenOracleProxy {
+contract AssetOracleAdapter is Ownable, IAdapter {
     /// @notice aggregator contract collecting price data from different sources
     IAggregator public aggregator;
 
     /// @notice the description of the price source
     string public description;
     /// @notice the number of decimals the aggregator responses represent
-    uint256 public decimals;
+    uint8 public decimals;
     /// @notice address of the underlying asset
     address public asset;
 
@@ -23,7 +23,7 @@ contract AssetOracleAdapter is Ownable, ITokenOracleProxy {
     /// @param _description the description of the price source
     /// @param _decimals the number of decimals the aggregator responses represent
     /// @param _asset address of the underlying asset
-    constructor(address _aggregator, string memory _description, uint256 _decimals, address _asset) Ownable(msg.sender) {
+    constructor(address _aggregator, string memory _description, uint8 _decimals, address _asset) Ownable(msg.sender) {
         aggregator = IAggregator(_aggregator);
         description = _description;
         decimals = _decimals;

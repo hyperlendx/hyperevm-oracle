@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import { Ownable } from "../utils/Ownable.sol";
 import { IAggregator } from "../interfaces/IAggregator.sol";
-import { ITokenOracleProxy } from "../interfaces/ITokenOracleProxy.sol";
+import { IAdapter } from "../interfaces/IAdapter.sol";
 import { IOracle } from "../interfaces/IOracle.sol";
 import { IERC4626 } from "../interfaces/IERC4626.sol";
 
@@ -15,7 +15,7 @@ interface IstHYPE {
 ///@title StHypeAdapter
 ///@author fbsloXBT
 ///@notice An adapter returning price of staked HYPE (stHYPE), based on underlying asset
-contract StHypeAdapter is Ownable, ITokenOracleProxy {
+contract StHypeAdapter is Ownable, IAdapter {
     /// @notice contract providing price of the underlying asset
     IOracle public priceProvider;
 

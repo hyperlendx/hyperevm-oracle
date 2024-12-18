@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import { Ownable } from "../utils/Ownable.sol";
 import { IAggregator } from "../interfaces/IAggregator.sol";
-import { ITokenOracleProxy } from "../interfaces/ITokenOracleProxy.sol";
 
 contract MockPriceProvider {
     int256 public price;
