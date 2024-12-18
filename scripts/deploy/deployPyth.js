@@ -7,6 +7,9 @@ async function main(pythContract, description, asset, priceFeedId) {
         pythContract, description, asset, priceFeedId
     ]);
 
+    // console.log(proxy.target)
+    // console.log(await proxy.latestRoundData())
+
     await proxy.waitForDeployment();
     await verify(proxy.target, [
         pythContract, description, asset, priceFeedId

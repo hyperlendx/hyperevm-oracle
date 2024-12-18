@@ -20,13 +20,13 @@ const mainnetConfig = {
             oracleDecimals: 8,
             oracleName: "BTC/USD-HL",
         },
-        // {   
-        //     oracleType: "pyth",
-        //     symbol: "DOGE",
-        //     contract: "0xADcb2f358Eae6492F61A5F87eb8893d09391d160",
-        //     oracleName: "DOGE/USD-PYTH",
-        //     pythPriceFeedId: "0xdcef50dd0a4cd2dcc17e45df1676dcb336a11a61c69df7a0299b0150c672d25c"
-        // }
+        {   
+            oracleType: "pyth",
+            symbol: "HYPE",
+            contract: "0x0000000000000000000000000000000000000001",
+            oracleName: "HYPE/USD-PYTH",
+            pythPriceFeedId: "0x4279e31cc369bbcc2faf022b382b080e32a8e689ff20fbc530d2a603eb6cd98b"
+        }
     ]
 }
 

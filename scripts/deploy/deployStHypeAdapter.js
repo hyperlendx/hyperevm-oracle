@@ -10,6 +10,10 @@ async function main(priceProvider, description, asset) {
     ]);
 
     await proxy.waitForDeployment();
+
+    // console.log(proxy.target)
+    // console.log(await proxy.latestRoundData())
+    
     await verify(proxy.target, [
         priceProvider,
         description,
