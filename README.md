@@ -6,7 +6,7 @@ HyperEVM oracle is used to read data from Hyperliquids System Oracle and serve i
 
 ---
 
-If the asset is available as perp on Hyperliquid, we just use the perp oracle price (submited by L1 validators).
+If the asset is available as perp on Hyperliquid, we just use the perp oracle price (submitted by L1 validators).
 
 Otherwise, keepers must submit the data, and EMA is used as price;
 
