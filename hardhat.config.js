@@ -8,15 +8,24 @@ module.exports = {
         hyperEvmTestnet: {
             accounts: [process.env.PRIVATE_KEY],
             chainId: 998,
-            url: "https://api.hyperliquid-testnet.xyz/evm", 
+            url: "https://rpc.hyperliquid-testnet.xyz/evm", 
             forking: {
-                url: "https://api.hyperliquid-testnet.xyz/evm",
+                url: "https://rpc.hyperliquid-testnet.xyz/evm",
+            }
+        },
+        hyperEvm: {
+            accounts: [process.env.PRIVATE_KEY],
+            chainId: 999,
+            url: "https://rpc.hyperliquid.xyz/evm", 
+            forking: {
+                url: "https://rpc.hyperliquid.xyz/evm",
             }
         }
     },
     etherscan: {
         apiKey: {
-            hyperEvmTestnet: 'empty',
+            hyperEvmTestnet: "empty",
+            hyperEvm: "empty"
         },
         customChains: [
             {
@@ -26,7 +35,20 @@ module.exports = {
                     apiURL: "https://explorer.hyperlend.finance/api",
                     browserURL: "https://explorer.hyperlend.finance"
                 }
+            },
+            {
+                network: "hyperEvm",
+                chainId: 999,
+                urls: {
+                    apiURL: "https://hyperliquid.cloud.blockscout.com/api",
+                    browserURL: "https://hyperliquid.cloud.blockscout.com"
+                }
             }
         ]
     },
+    sourcify: {
+        enabled: true,
+        apiUrl: "https://sourcify.parsec.finance",
+        browserUrl: "https://purrsec.com/",
+    }
 };

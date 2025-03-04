@@ -9,11 +9,13 @@ import { IERC4626 } from "../interfaces/IERC4626.sol";
 
 interface IstHYPE {
     function decimals() external view returns (uint8);
-    function sharesToAssets(uint256 _shares) external view returns (uint256);
+    function totalSupply() external view returns (uint256);
+    function totalShares() external view returns (uint256);
+    function balanceToShareDecimals() external view returns (uint256);
 }
 
 ///@title StHypeAdapter
-///@author fbsloXBT
+///@author HyperLend, inspired by 0x5777a35eed45cfd605dad5d3d7b531ac2f409cd1
 ///@notice An adapter returning price of staked HYPE (stHYPE), based on underlying asset
 contract StHypeAdapter is Ownable, IAdapter {
     /// @notice contract providing price of the underlying asset
@@ -68,12 +70,14 @@ contract StHypeAdapter is Ownable, IAdapter {
             uint80 _answeredInRound
         ) = priceProvider.latestRoundData();
 
-        //get assets per 1 vault token (accounting for decimals)
-        uint256 baseShareAmount = 10 ** asset.decimals();
-        uint256 assetPerBaseShare = asset.sharesToAssets(baseShareAmount);
+        uint256 precision = 1e18;
+        uint256 totalStHype = asset.totalSupply();
+        uint256 totalStHypeShares = asset.totalShares() / asset.balanceToShareDecimals();
+  
+        require(_answer > 0, "negative price");
+        require(totalStHype * precision / totalStHypeShares <= uint256(type(int256).max), "int256 overflow");
 
-        //calculate the price of 1 vault token
-        answer = _answer * int256(assetPerBaseShare) / int256(baseShareAmount);
+        answer = _answer * int256(totalStHype * precision / totalStHypeShares) / int256(precision);
 
         roundId = _roundId;
         startedAt = _startedAt;
