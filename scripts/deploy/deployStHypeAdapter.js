@@ -2,11 +2,12 @@ const hre = require("hardhat");
 
 const { verify } = require("../utils/verify")
 
-async function main(priceProvider, description, asset) {
+async function main(priceProvider, description, asset, rateProvider) {
     const proxy = await hre.ethers.deployContract("StHypeAdapter", [
         priceProvider,
         description,
-        asset
+        asset,
+        rateProvider
     ]);
 
     await proxy.waitForDeployment();

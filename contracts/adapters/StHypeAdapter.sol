@@ -14,12 +14,14 @@ interface IstHYPE {
     function balanceToShareDecimals() external view returns (uint256);
 }
 
-///@title StHypeAdapter
-///@author HyperLend, inspired by 0x5777a35eed45cfd605dad5d3d7b531ac2f409cd1
-///@notice An adapter returning price of staked HYPE (stHYPE), based on underlying asset
+///@title wStHypeAdapter
+///@author HyperLend
+///@notice An adapter returning price of wrapped staked HYPE (wstHYPE), based on underlying asset
 contract StHypeAdapter is Ownable, IAdapter {
     /// @notice contract providing price of the underlying asset
     IOracle public priceProvider;
+    /// @notice contract providing the ratio between wrapped and underlying asset
+    IOracle public ratioProvider;
 
     /// @notice the description of the price source
     string public description;
@@ -27,15 +29,20 @@ contract StHypeAdapter is Ownable, IAdapter {
     uint8 public decimals;
     /// @notice address of the underlying stHYPE token
     IstHYPE public asset;
+    ///@notice decimals of the ratio oracle
+    uint8 public ratioDecimals;
 
     /// @param _priceProvider contract providing price of the underlying asset
     /// @param _description the description of the price source
     /// @param _asset address of the underlying asset
-    constructor(address _priceProvider, string memory _description, address _asset) Ownable(msg.sender) {
+    /// @param _ratioProvider contract providing the ratio between wrapped and underlying asset
+    constructor(address _priceProvider, string memory _description, address _asset, address _ratioProvider) Ownable(msg.sender) {
         priceProvider = IOracle(_priceProvider);
         description = _description;
         decimals = priceProvider.decimals();
         asset = IstHYPE(_asset);
+        ratioProvider = IOracle(_ratioProvider);
+        ratioDecimals = ratioProvider.decimals();
     }
 
     /// @notice returns the latest price
@@ -69,16 +76,13 @@ contract StHypeAdapter is Ownable, IAdapter {
             uint256 _updatedAt,
             uint80 _answeredInRound
         ) = priceProvider.latestRoundData();
+        require(_answer > 0, "price <= 0");
 
-        uint256 precision = 1e18;
-        uint256 totalStHype = asset.totalSupply();
-        uint256 totalStHypeShares = asset.totalShares() / asset.balanceToShareDecimals();
-  
-        require(_answer > 0, "negative price");
-        require(totalStHype * precision / totalStHypeShares <= uint256(type(int256).max), "int256 overflow");
+        (, int256 _ratioAnswer ,,,) = ratioProvider.latestRoundData();
 
-        answer = _answer * int256(totalStHype * precision / totalStHypeShares) / int256(precision);
+        answer = _answer * _ratioAnswer / int256(10**ratioDecimals);
 
+        //return round data for the underlying price
         roundId = _roundId;
         startedAt = _startedAt;
         updatedAt = _updatedAt;
