@@ -3,9 +3,11 @@ pragma solidity 0.8.19;
 
 import {ChainlinkConsumer} from "./ChainlinkConsumer.sol";
 
+/// @notice Contract serving data for a single price feed 
 contract SingleFeedProvider {
-
+    /// @notice ChainlinkConsumer source contract
     ChainlinkConsumer public source;
+    /// @notice feedId of the target price feed
     bytes32 public feedId;
 
     constructor(address _source, bytes32 _feedId){
