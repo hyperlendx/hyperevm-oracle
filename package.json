@@ -1,6 +1,7 @@
 {
   "name": "hardhat-project",
   "dependencies": {
+    "@chainlink/contracts": "^1.4.0",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@pythnetwork/pyth-sdk-solidity": "^4.0.0",
     "dotenv": "^16.4.5",
