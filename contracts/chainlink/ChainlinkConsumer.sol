@@ -156,7 +156,7 @@ contract ChainlinkConsumer {
         }
     }
 
-    /// @notice verify multipler reports in one trasnactions
+    /// @notice verify multipler reports in one transactions
     /// @param batch an array of DON reports
     function verifyBatch(bytes[] memory batch) external {
         for (uint256 i = 0; i < batch.length; i++){
