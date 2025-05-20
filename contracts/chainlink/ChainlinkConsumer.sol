@@ -68,7 +68,7 @@ contract ChainlinkConsumer {
     mapping(bytes32 => uint256) public lastDecodedTimestamp;
 
     /// @notice Event emitted when a report is successfully verified and decoded.
-    event DecodedReport(int192 price, uint256 timestamp);
+    event DecodedReport(bytes32 feedId, int192 price, uint256 timestamp);
 
     /// @param _verifierProxy The address of the VerifierProxy contract.
     /// @dev You can find these addresses on https://docs.chain.link/data-streams/crypto-streams.
@@ -132,12 +132,13 @@ contract ChainlinkConsumer {
                 (ReportV3)
             );
 
-            // Log price from the verified report
-            emit DecodedReport(verifiedReport.price, verifiedReport.validFromTimestamp);
-
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            lastDecodedTimestamp[verifiedReport.feedId] = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
+            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
+            lastDecodedTimestamp[verifiedReport.feedId] = avgTimestamp;
+
+            // Log price from the verified report
+            emit DecodedReport(verifiedReport.feedId, verifiedReport.price, avgTimestamp);
         } else if (reportVersion == 4) {
             // v4 report schema
             ReportV4 memory verifiedReport = abi.decode(
@@ -145,12 +146,13 @@ contract ChainlinkConsumer {
                 (ReportV4)
             );
 
-            // Log price from the verified report
-            emit DecodedReport(verifiedReport.price, verifiedReport.validFromTimestamp);
-
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            lastDecodedTimestamp[verifiedReport.feedId] = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
+            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
+            lastDecodedTimestamp[verifiedReport.feedId] = avgTimestamp;
+
+            // Log price from the verified report
+            emit DecodedReport(verifiedReport.feedId, verifiedReport.price, avgTimestamp);
         }
     }
 
