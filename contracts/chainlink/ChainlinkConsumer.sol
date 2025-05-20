@@ -12,13 +12,15 @@ import {IFeeManager} from "./interfaces/IFeeManager.sol";
 
 using SafeERC20 for IERC20;
 
-/**
- * @dev This contract implements functionality to verify Data Streams reports from
- * the Streams Direct API or WebSocket connection.
- */
+/// @title ChainlinkConsumer
+/// @author HyperLend
+/// @notice Contract collecting and verifying Chainlink Data Streams
+/// @dev Exposes latest price and timestamp for each feedId, which is then consumed by SingleFeedProvider.sol
 contract ChainlinkConsumer {
-    error NotOwner(address caller); // Thrown when a caller tries to execute a function that is restricted to the contract's owner.
-    error InvalidReportVersion(uint16 version); // Thrown when an unsupported report version is provided to verifyReport.
+    /// @notice Thrown when a caller tries to execute a function that is restricted to the contract's owner.
+    error NotOwner(address caller);
+    /// @notice Thrown when an unsupported report version is provided to verifyReport.
+    error InvalidReportVersion(uint16 version);
 
     /**
      * @dev Represents a data report from a Data Streams stream for v3 schema (crypto streams).
@@ -68,10 +70,8 @@ contract ChainlinkConsumer {
     /// @notice Event emitted when a report is successfully verified and decoded.
     event DecodedReport(int192 price, uint256 timestamp);
 
-    /**
-     * @param _verifierProxy The address of the VerifierProxy contract.
-     * You can find these addresses on https://docs.chain.link/data-streams/crypto-streams.
-     */
+    /// @param _verifierProxy The address of the VerifierProxy contract.
+    /// @dev You can find these addresses on https://docs.chain.link/data-streams/crypto-streams.
     constructor(address _verifierProxy) {
         s_owner = msg.sender;
         s_verifierProxy = IVerifierProxy(_verifierProxy);
@@ -84,7 +84,7 @@ contract ChainlinkConsumer {
     }
 
     /**
-     * @notice Verifies an unverified data report and processes its contents, supporting both v3 and v4 report schemas.
+     * @notice Verifies an unverified data report and stores its contents, supporting both v3 and v4 report schemas.
      * @dev Performs the following steps:
      * - Decodes the unverified report to extract the report data.
      * - Extracts the report version by reading the first two bytes of the report data.
@@ -98,7 +98,7 @@ contract ChainlinkConsumer {
      * - Verifies the report via the VerifierProxy contract.
      * - Decodes the verified report data into the appropriate report struct (`ReportV3` or `ReportV4`) based on the report version.
      * - Emits a `DecodedPrice` event with the price extracted from the verified report.
-     * - Updates the `lastDecodedPrice` state variable with the price from the verified report.
+     * - Updates the `lastDecodedPrice` and `lastDecodedTimestamp` state variables with the data from the verified report.
      * @param unverifiedReport The encoded report data to be verified, including the signed report and metadata.
      * @custom:reverts InvalidReportVersion(uint8 version) Thrown when an unsupported report version is provided.
      */
@@ -137,7 +137,7 @@ contract ChainlinkConsumer {
 
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            lastDecodedTimestamp[verifiedReport.feedId] = verifiedReport.validFromTimestamp;
+            lastDecodedTimestamp[verifiedReport.feedId] = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
         } else if (reportVersion == 4) {
             // v4 report schema
             ReportV4 memory verifiedReport = abi.decode(
@@ -150,29 +150,38 @@ contract ChainlinkConsumer {
 
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            lastDecodedTimestamp[verifiedReport.feedId] = verifiedReport.validFromTimestamp;
+            lastDecodedTimestamp[verifiedReport.feedId] = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
         }
+    }
+
+    /// @notice used to read the latest price data for a given feedId
+    /// @param feedId id of the price feed
+    function getLatestAnswer(bytes32 feedId) external view returns (int256) {
+        return int256(lastDecodedPrice[feedId]);
+    }
+
+    /// @notice used to read the latest timestamp data for a given feedId
+    /// @param feedId id of the price feed
+    function getLatestTimestamp(bytes32 feedId) external view returns (uint256) {
+        return lastDecodedTimestamp[feedId];
     }
 
     /**
      * @notice Withdraws all tokens of a specific ERC20 token type to a beneficiary address.
      * @dev Utilizes SafeERC20's safeTransfer for secure token transfer. Reverts if the contract's balance of the specified token is zero.
      * @param _beneficiary Address to which the tokens will be sent. Must not be the zero address.
-     * @param _token Address of the ERC20 token to be withdrawn. Must be a valid ERC20 token contract.
-     */
+     * @param _token Address of the ERC20 token to be withdrawn. Must be a valid ERC20 token contract or address(0) for native tokens.
+    */
     function withdrawToken(
-        address _beneficiary,
+        address  _beneficiary,
         address _token
     ) public onlyOwner {
-        uint256 amount = IERC20(_token).balanceOf(address(this));
-        IERC20(_token).safeTransfer(_beneficiary, amount);
-    }
-
-    function getLatestAnswer(bytes32 feedId) external view returns (int256) {
-        return int256(lastDecodedPrice[feedId]);
-    }
-
-    function getLatestTimestamp(bytes32 feedId) external view returns (uint256) {
-        return lastDecodedTimestamp[feedId];
+        if (_token == address(0)) {
+            (bool sent, ) = payable(_beneficiary).call{value: address(this).balance }("");
+            require(sent, "Failed to send native");
+        } else {
+            uint256 amount = IERC20(_token).balanceOf(address(this));
+            IERC20(_token).safeTransfer(_beneficiary, amount);
+        }
     }
 }
