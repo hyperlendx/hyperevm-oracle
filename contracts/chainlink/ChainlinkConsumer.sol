@@ -134,7 +134,7 @@ contract ChainlinkConsumer {
 
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
+            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.observationsTimestamp) / 2;
             lastDecodedTimestamp[verifiedReport.feedId] = avgTimestamp;
 
             // Log price from the verified report
@@ -148,7 +148,7 @@ contract ChainlinkConsumer {
 
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.validFromTimestamp) / 2;
+            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.observationsTimestamp) / 2;
             lastDecodedTimestamp[verifiedReport.feedId] = avgTimestamp;
 
             // Log price from the verified report
