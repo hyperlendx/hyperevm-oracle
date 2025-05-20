@@ -102,7 +102,7 @@ contract ChainlinkConsumer {
      * @param unverifiedReport The encoded report data to be verified, including the signed report and metadata.
      * @custom:reverts InvalidReportVersion(uint8 version) Thrown when an unsupported report version is provided.
      */
-    function verifyReport(bytes memory unverifiedReport) external {
+    function verifyReport(bytes memory unverifiedReport) public {
         // Decode unverified report to extract report data
         (, bytes memory reportData) = abi.decode(
             unverifiedReport,
@@ -153,6 +153,14 @@ contract ChainlinkConsumer {
 
             // Log price from the verified report
             emit DecodedReport(verifiedReport.feedId, verifiedReport.price, avgTimestamp);
+        }
+    }
+
+    /// @notice verify multipler reports in one trasnactions
+    /// @param batch an array of DON reports
+    function verifyBatch(bytes[] memory batch) external {
+        for (uint256 i = 0; i < batch.length; i++){
+            verifyReport(batch[i]);
         }
     }
 
