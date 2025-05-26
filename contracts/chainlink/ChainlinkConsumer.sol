@@ -21,6 +21,8 @@ contract ChainlinkConsumer {
     error NotOwner(address caller);
     /// @notice Thrown when an unsupported report version is provided to verifyReport.
     error InvalidReportVersion(uint16 version);
+    /// @notice Thrown if RWA market is not open
+    error MarketNotOpen(bytes32 feedId, uint32 marketStatus);
 
     /**
      * @dev Represents a data report from a Data Streams stream for v3 schema (crypto streams).
@@ -145,6 +147,11 @@ contract ChainlinkConsumer {
                 verifiedReportData,
                 (ReportV4)
             );
+            
+            // Revert if the market status is not `Open`
+            if (verifiedReport.marketStatus != 2){
+                revert MarketNotOpen(verifiedReport.feedId, verifiedReport.marketStatus);
+            }
 
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
