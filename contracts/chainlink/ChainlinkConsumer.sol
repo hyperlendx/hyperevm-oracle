@@ -23,6 +23,8 @@ contract ChainlinkConsumer {
     error InvalidReportVersion(uint16 version);
     /// @notice Thrown if RWA market is not open
     error MarketNotOpen(bytes32 feedId, uint32 marketStatus);
+    /// @notice Thrown if new timestamp would be older than the previous timestamp
+    error OldData(bytes32 feedId, uint256 reportTimestamp, uint256 previousTimestamp);
 
     /**
      * @dev Represents a data report from a Data Streams stream for v3 schema (crypto streams).
@@ -134,9 +136,14 @@ contract ChainlinkConsumer {
                 (ReportV3)
             );
 
+            // Calculate the average timestamp and revert if it's older than the last verified timestamp
+            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.observationsTimestamp) / 2;
+            if (lastDecodedTimestamp[verifiedReport.feedId] > avgTimestamp){
+                revert OldData(verifiedReport.feedId, avgTimestamp, lastDecodedTimestamp[verifiedReport.feedId]);
+            }
+
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.observationsTimestamp) / 2;
             lastDecodedTimestamp[verifiedReport.feedId] = avgTimestamp;
 
             // Log price from the verified report
@@ -153,9 +160,14 @@ contract ChainlinkConsumer {
                 revert MarketNotOpen(verifiedReport.feedId, verifiedReport.marketStatus);
             }
 
+            // Calculate the average timestamp and revert if it's older than the last verified timestamp
+            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.observationsTimestamp) / 2;
+            if (lastDecodedTimestamp[verifiedReport.feedId] > avgTimestamp){
+                revert OldData(verifiedReport.feedId, avgTimestamp, lastDecodedTimestamp[verifiedReport.feedId]);
+            }
+
             // Store the price & timestamp from the report
             lastDecodedPrice[verifiedReport.feedId] = verifiedReport.price;
-            uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.observationsTimestamp) / 2;
             lastDecodedTimestamp[verifiedReport.feedId] = avgTimestamp;
 
             // Log price from the verified report
