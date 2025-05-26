@@ -185,7 +185,7 @@ contract ChainlinkConsumer {
 
     /**
      * @notice Withdraws all tokens of a specific ERC20 token type to a beneficiary address.
-     * @dev Utilizes SafeERC20's safeTransfer for secure token transfer. Reverts if the contract's balance of the specified token is zero.
+     * @dev Utilizes SafeERC20's safeTransfer for secure token transfer.
      * @param _beneficiary Address to which the tokens will be sent. Must not be the zero address.
      * @param _token Address of the ERC20 token to be withdrawn. Must be a valid ERC20 token contract or address(0) for native tokens.
     */
