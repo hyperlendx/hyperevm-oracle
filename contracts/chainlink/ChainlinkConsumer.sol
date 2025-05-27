@@ -165,7 +165,7 @@ contract ChainlinkConsumer {
 
             // Calculate the average timestamp and revert if it's older than the last verified timestamp
             uint256 avgTimestamp = (verifiedReport.validFromTimestamp + verifiedReport.observationsTimestamp) / 2;
-            if (lastDecodedTimestamp[verifiedReport.feedId] > avgTimestamp){
+            if (lastDecodedTimestamp[verifiedReport.feedId] >= avgTimestamp){
                 revert OldData(verifiedReport.feedId, avgTimestamp, lastDecodedTimestamp[verifiedReport.feedId]);
             }
 
