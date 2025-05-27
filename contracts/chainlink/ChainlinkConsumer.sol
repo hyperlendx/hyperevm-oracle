@@ -106,7 +106,7 @@ contract ChainlinkConsumer {
      * @param unverifiedReport The encoded report data to be verified, including the signed report and metadata.
      * @custom:reverts InvalidReportVersion(uint8 version) Thrown when an unsupported report version is provided.
      */
-    function verifyReport(bytes memory unverifiedReport) public {
+    function verifyReport(bytes memory unverifiedReport) public payable {
         // Decode unverified report to extract report data
         (, bytes memory reportData) = abi.decode(
             unverifiedReport,
@@ -122,10 +122,13 @@ contract ChainlinkConsumer {
             revert InvalidReportVersion(uint8(reportVersion));
         }
 
+        // Send the payment if needed
+        address feeToken = _processPayment(reportData);
+
         // Verify the report through the VerifierProxy
         bytes memory verifiedReportData = s_verifierProxy.verify(
             unverifiedReport,
-            abi.encode(address(0))
+            abi.encode(feeToken)
         );
 
         // Decode verified report data into the appropriate Report struct based on reportVersion
@@ -173,6 +176,38 @@ contract ChainlinkConsumer {
             // Log price from the verified report
             emit DecodedReport(verifiedReport.feedId, verifiedReport.price, avgTimestamp);
         }
+    }
+
+    /// @notice process the fee payment if needed
+    function _processPayment(bytes memory reportData) internal returns (address) {
+        // Retrieve fee manager
+        IFeeManager feeManager = IFeeManager(
+            address(s_verifierProxy.s_feeManager())
+        );
+
+        if (address(feeManager) != address(0)){
+            // Retrieve reward manager
+            IRewardManager rewardManager = IRewardManager(
+                address(feeManager.i_rewardManager())
+            );
+
+            // Set the fee token address
+            address feeTokenAddress = feeManager.i_linkAddress();
+
+            // Calculate the fee required for report verification
+            (Common.Asset memory fee, , ) = feeManager.getFeeAndReward(
+                address(this),
+                reportData,
+                feeTokenAddress
+            );
+
+            // Approve rewardManager to spend this contract's balance in fees
+            IERC20(feeTokenAddress).safeIncreaseAllowance(address(rewardManager), fee.amount);
+
+            return feeTokenAddress;
+        }
+
+        return address(0);
     }
 
     /// @notice verify multipler reports in one transactions

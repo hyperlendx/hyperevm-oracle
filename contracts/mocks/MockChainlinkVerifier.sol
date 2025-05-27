@@ -13,4 +13,8 @@ contract MockChainlinkVerifier {
 
         return reportData;
     }
+
+    function s_feeManager() external returns (address) {
+        return address(0);
+    }
 }
