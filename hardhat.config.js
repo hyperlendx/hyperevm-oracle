@@ -49,8 +49,8 @@ module.exports = {
                 network: "hyperEvm",
                 chainId: 999,
                 urls: {
-                    apiURL: "https://hyperliquid.cloud.blockscout.com/api",
-                    browserURL: "https://hyperliquid.cloud.blockscout.com"
+                    apiURL: "https://www.hyperscan.com/api",
+                    browserURL: "https://www.hyperscan.com"
                 }
             }
         ]
