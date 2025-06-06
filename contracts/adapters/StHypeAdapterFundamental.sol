@@ -90,6 +90,6 @@ contract StHypeAdapterFundamental is Ownable, IAdapter {
     }
 
     function getRatio() public view returns (uint256) {
-        return asset.balancePerShare() / 1e10;
+        return asset.balancePerShare();
     }
 }
