@@ -14,6 +14,7 @@ interface IstHYPE {
     function balanceToShareDecimals() external view returns (uint256);
     function sharesToBalance(uint256) external view returns (uint256);
     function balancePerShare() external view returns (uint256);
+    function sthype() external view returns (address);
 }
 
 ///@title wStHypeAdapter
@@ -27,8 +28,10 @@ contract StHypeAdapterFundamental is Ownable, IAdapter {
     string public description;
     /// @notice the number of decimals the aggregator responses represent
     uint8 public decimals;
-    /// @notice address of the underlying stHYPE token
+    /// @notice address of the underlying sstHYPE token
     IstHYPE public asset;
+    /// @notice address of the underlying stHYPE token
+    IstHYPE public stHYPE;
     ///@notice decimals of the ratio oracle
     uint8 public ratioDecimals;
 
@@ -42,6 +45,7 @@ contract StHypeAdapterFundamental is Ownable, IAdapter {
         decimals = priceProvider.decimals();
         asset = IstHYPE(_asset);
         ratioDecimals = _ratioDecimals;
+        stHYPE = IstHYPE(asset.sthype());
     }
 
     /// @notice returns the latest price
@@ -78,7 +82,7 @@ contract StHypeAdapterFundamental is Ownable, IAdapter {
         require(_answer > 0, "price <= 0");
 
         //get the wstHYPE/stHYPE ratio with 8 decimals
-        uint256 _ratioAnswer = getRatio();
+        int256 _ratioAnswer = getRatio();
 
         answer = _answer * _ratioAnswer / int256(10**ratioDecimals);
 
@@ -89,7 +93,7 @@ contract StHypeAdapterFundamental is Ownable, IAdapter {
         answeredInRound = _answeredInRound;
     }
 
-    function getRatio() public view returns (uint256) {
-        return asset.balancePerShare();
+    function getRatio() public view returns (int256) {
+        return int256(stHYPE.balancePerShare());
     }
 }
