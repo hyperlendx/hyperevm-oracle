@@ -81,7 +81,7 @@ contract StHypeAdapterFundamental is Ownable, IAdapter {
         ) = priceProvider.latestRoundData();
         require(_answer > 0, "price <= 0");
 
-        //get the wstHYPE/stHYPE ratio with 8 decimals
+        //get the wstHYPE/stHYPE ratio with 18 decimals
         int256 _ratioAnswer = getRatio();
 
         answer = _answer * _ratioAnswer / int256(10**ratioDecimals);
