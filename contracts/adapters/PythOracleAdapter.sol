@@ -9,7 +9,7 @@ import "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
 ///@notice Pyth oracle adapter
 contract PythOracleAdapter {
     /// @notice pyth oracle contract on the HyperEVM chain
-    IPyth pyth;
+    IPyth public pyth;
 
     /// @notice address of the underlying asset
     address public asset;

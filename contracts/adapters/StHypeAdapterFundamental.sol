@@ -28,7 +28,7 @@ contract StHypeAdapterFundamental is Ownable, IAdapter {
     string public description;
     /// @notice the number of decimals the aggregator responses represent
     uint8 public decimals;
-    /// @notice address of the underlying sstHYPE token
+    /// @notice address of the underlying wstHYPE token
     IstHYPE public asset;
     /// @notice address of the underlying stHYPE token
     IstHYPE public stHYPE;

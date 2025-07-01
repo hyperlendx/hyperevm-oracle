@@ -14,6 +14,8 @@ const { verify } = require("../utils/verify")
 //     return proxy
 // }
 
+// main('0xe9d69cdd6fe41e7b621b4a688c5d1a68cb5c8adc', 'Pyth-USDHL/USD', '0xb50A96253aBDF803D85efcDce07Ad8becBc52BD5', '0x1497fb795ae65533d36d147b1b88c8b7226866a201589904c13acd314f694799')
+
 async function main(pythContract, description, asset, priceFeedId) {
     const proxy = await hre.ethers.deployContract("PythOracleAdapter", [
         pythContract, description, asset, priceFeedId

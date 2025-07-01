@@ -25,7 +25,7 @@ async function main() {
 
     // console.log(await sourceConsumer.lastDecodedPrice())
 
-    const feedId = '0x0003d34539af562867c3cb309b59efccf40e74b404fb415eeb7699d61322aed9'
+    const feedId = '0x0003a910a43485e0685ff5d6d366541f5c21150f0634c5b14254392d1a1c06db'
     const sourceConsumer = {
       target: '0x2F81b130ce13337f4eAc9e205E5eA710b492dbA4'
     }
