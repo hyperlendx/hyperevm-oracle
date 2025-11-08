@@ -14,16 +14,18 @@ const { verify } = require("../utils/verify")
 //     return proxy
 // }
 
-main('0xe9d69cdd6fe41e7b621b4a688c5d1a68cb5c8adc', 'Pyth-wstUSR/USR', '0x46c1c168Ca597B9e5423Aa7081a0DCE782caEAab', '0xb74c2bc175c2dab850ce5a5451608501c293fe8410cb4aba7449dd1c355ab706')
+main('0xf1CeE6FD8464a059B6d2F3e8A0754cD530e78c17', 'Redstone+Chainlink-beHYPE/USD', '0xd8FC8F0b03eBA61F64D08B0bef69d80916E5DdA9', '0x5016c48F36f7e4C83b5C4D4b7227BFEf35Ae7688')
 
-async function main(pythContract, description, asset, priceFeedId) {
-    const proxy = await hre.ethers.deployContract("PythOracleAdapter", [
-        pythContract, description, asset, priceFeedId
-    ], {gasPrice: 5000000000, gasLimit: 1000000});
+async function main(priceProvider, description, asset, ratioProvider) {
+    const proxy = await hre.ethers.deployContract("RatioAdapter", [
+        priceProvider, description, asset, ratioProvider
+    ], {gasPrice: 5000000000, gasLimit: 1500000});
 
     await proxy.waitForDeployment();
+
+    await new Promise(r => setTimeout(r, 15_000));
     await verify(proxy.target, [
-        pythContract, description, asset, priceFeedId
+        priceProvider, description, asset, ratioProvider
     ])
 
     console.log(proxy.target)

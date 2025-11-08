@@ -34,7 +34,7 @@ module.exports = {
     etherscan: {
         apiKey: {
             hyperEvmTestnet: "empty",
-            hyperEvm: "empty"
+            hyperEvm: process.env.ETHERSCAN_API_KEY
         },
         customChains: [
             {
@@ -49,8 +49,8 @@ module.exports = {
                 network: "hyperEvm",
                 chainId: 999,
                 urls: {
-                    apiURL: "https://www.hyperscan.com/api",
-                    browserURL: "https://www.hyperscan.com"
+                    apiURL: "https://api.etherscan.io/v2/api?chainId=999",
+                    browserURL: "https://www.hyperevmscan.io"
                 }
             }
         ]

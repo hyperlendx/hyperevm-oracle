@@ -13,16 +13,20 @@ contract SingleFeedProvider {
     bytes32 public feedId;
     /// @notice number of decimals from the DON report
     uint256 public donDecimals;
+    /// @notice description of the price feed
+    string public description;
 
     /// @param _source address of the ChainlinkConsumer that verifies and holds actual data
     /// @param _feedId id of the target price feed
     /// @param _donDecimals number of decimals from the DON report
-    constructor(address _source, bytes32 _feedId, uint256 _donDecimals){
+    /// @param _description description of the price feed
+    constructor(address _source, bytes32 _feedId, uint256 _donDecimals, string memory _description){
         require(_donDecimals >= decimals(), "donDecimals < decimals");
 
         source = ChainlinkConsumer(_source);
         feedId = _feedId;
         donDecimals = _donDecimals;
+        description = _description;
     }
 
     /// @notice returns the number of decimals for the price format

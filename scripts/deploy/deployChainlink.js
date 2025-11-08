@@ -25,12 +25,13 @@ async function main() {
 
     // console.log(await sourceConsumer.lastDecodedPrice())
 
-    const feedId = '0x0003a910a43485e0685ff5d6d366541f5c21150f0634c5b14254392d1a1c06db'
+    const feedId = '0x00038f83323b6b08116d1614cf33a9bd71ab5e0abf0c9f1b783a74a43e7bd992'
+    const description = 'Chainlink-USDC/USD'
     const sourceConsumer = {
       target: '0x2F81b130ce13337f4eAc9e205E5eA710b492dbA4'
     }
     const singleFeed = await hre.ethers.deployContract("SingleFeedProvider", [
-        sourceConsumer.target, feedId, 18
+        sourceConsumer.target, feedId, 18, description
     ], { gasPrice: '10000000000', gasLimit: '2000000' });
     await singleFeed.waitForDeployment();
     console.log(singleFeed.target)
