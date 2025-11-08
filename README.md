@@ -12,7 +12,7 @@ Otherwise, keepers must submit the data, and EMA is used as price;
 
 ---
 
-`Aggregator.sol` - aggregates the data from the SystemOracle or data submitted by the keepers.
+`Aggregator.sol` - aggregates the data from the SystemOracle or data submitted by the keepers. (note: not used in production)
 
 `AssetOracleProxy.sol` - exposes a Chainlink-compatible* interface for a certain token, while reading data from the `Aggregator`
 
