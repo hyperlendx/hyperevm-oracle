@@ -6,7 +6,7 @@ import { IAdapter } from "../interfaces/IAdapter.sol";
 import { IOracle } from "../interfaces/IOracle.sol";
 import { IERC4626 } from "../interfaces/IERC4626.sol";
 import { IERC20 } from "../interfaces/IERC20.sol";
-import { IACLManager } from "../interface/IACLManager.sol";
+import { IACLManager } from "../interfaces/IACLManager.sol";
 
 ///@title DualFallbackOracle
 ///@author HyperLend
@@ -34,8 +34,8 @@ contract DualFallbackOracle is IAdapter {
     IOracle public PRIMARY_SOURCE;
     /// @notice fallback price source, used if main is not available
     IOracle public FALLBACK_SOURCE;
-    /// @notice price source which can be toggled by risk admin
-    IOracle public EMERGENCY_ORACLE;
+    /// @notice price source which can be toggled by poolAdmin / emergencyAdmin / riskAdmin
+    IOracle public EMERGENCY_SOURCE;
 
     /// @notice maximum allowed time since the last price update for primary oracle
     /// @dev if price update is older, fallback oracle will be used (if price there is not stale either)
@@ -53,30 +53,46 @@ contract DualFallbackOracle is IAdapter {
     
     /// @notice thrown if caller is not poolAdmin / emergencyAdmin / riskAdmin on HyperLend ACLManager
     error NotAdmin();
+    /// @notice thrown when address(0) is used
+    error InvalidAddress();
+    /// @notice thrown when there decimals are missmatched between oracles
+    error InvalidDecimals();
 
     /// @notice emitted when emergency oracle use is toggled
     event SetEnableEmergencyOracle(bool isEnabled);
 
-    /// @param _mainSource chainlink-compatible price oracle, used most of the time
+    /// @param _primarySource chainlink-compatible price oracle, used most of the time
     /// @param _fallbackSource chainlink-compatible price oracle, used when main is not available
-    /// @param _emergencyOracle chainlink-compatible price oracle which can be toggled by risk admin
+    /// @param _emergencySource chainlink-compatible price oracle which can be toggled by risk admin
     /// @param _aclManager HyperLend ACL Manager contract
     /// @param _description the description of the price source
+    /// @param _maxIntervalPrimary maximum allowed time since the last price update for primary oracle
+    /// @param _maxIntervalFallback maximum allowed time since the last price update for fallback oracle
     constructor(
         address _primarySource, 
         address _fallbackSource, 
-        address _emergencyOracle,
-        address _aclManager
+        address _emergencySource,
+        address _aclManager,
         string memory _description, 
+        uint256 _maxIntervalPrimary,
+        uint256 _maxIntervalFallback
     ) {
+        if (_primarySource == address(0)) revert InvalidAddress();
+        if (_fallbackSource == address(0)) revert InvalidAddress();
+        if (_aclManager == address(0)) revert InvalidAddress();
+
         PRIMARY_SOURCE = IOracle(_primarySource);
         FALLBACK_SOURCE = IOracle(_fallbackSource);
-        EMERGENCY_ORACLE = IOracle(_emergencyOracle);
+        EMERGENCY_SOURCE = IOracle(_emergencySource);
+
+        MAX_HEARTBEAT_INTERVAL_PRIMARY = _maxIntervalPrimary;
+        MAX_HEARTBEAT_INTERVAL_FALLBACK = _maxIntervalFallback;
 
         aclManager = IACLManager(_aclManager);
         description = _description;
 
-        require(PRIMARY_SOURCE.decimals() == FALLBACK_SOURCE.decimals(), "decimals missmatch");
+        if (PRIMARY_SOURCE.decimals() != FALLBACK_SOURCE.decimals()) revert InvalidDecimals();
+        if (PRIMARY_SOURCE.decimals() != EMERGENCY_SOURCE.decimals()) revert InvalidDecimals();
         decimals = PRIMARY_SOURCE.decimals();
     }
 
@@ -113,8 +129,8 @@ contract DualFallbackOracle is IAdapter {
         uint256 updatedAt,
         uint80 answeredInRound
     ) {
-        if (isEmergencyOracleEnabled){
-            return EMERGENCY_ORACLE.latestRoundData();
+        if (isEmergencyOracleEnabled && address(EMERGENCY_SOURCE) != address(0)){
+            return EMERGENCY_SOURCE.latestRoundData();
         }
 
         (
@@ -150,24 +166,24 @@ contract DualFallbackOracle is IAdapter {
         answeredInRound = _answeredInRound;
     }
 
-    function _isPrimaryHealthy(int256 _answer, uint256 _updatedAt) external view returns (bool){
+    function _isPrimaryHealthy(int256 _answer, uint256 _updatedAt) internal view returns (bool){
         if (_answer <= 0){
             return false;
         }
 
-        if (block.timestamp - _updatedAt > MAX_HEARTBEAT_INTERVAL_PRIMARY){
+        if (block.timestamp > _updatedAt + MAX_HEARTBEAT_INTERVAL_PRIMARY) {
             return false;
         }
 
         return true;
     }
 
-    function _isFallbackHealthy(int256 _answer, uint256 _updatedAt) external view returns (bool) {
+    function _isFallbackHealthy(int256 _answer, uint256 _updatedAt) internal view returns (bool) {
         if (_answer <= 0){
             return false;
         }
 
-        if (block.timestamp - _updatedAt > MAX_HEARTBEAT_INTERVAL_FALLBACK){
+        if (block.timestamp > _updatedAt + MAX_HEARTBEAT_INTERVAL_PRIMARY) {
             return false;
         }
 
