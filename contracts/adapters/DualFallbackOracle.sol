@@ -183,7 +183,7 @@ contract DualFallbackOracle is IAdapter {
             return false;
         }
 
-        if (block.timestamp > _updatedAt + MAX_HEARTBEAT_INTERVAL_PRIMARY) {
+        if (block.timestamp > _updatedAt + MAX_HEARTBEAT_INTERVAL_FALLBACK) {
             return false;
         }
 
