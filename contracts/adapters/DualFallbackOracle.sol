@@ -92,7 +92,7 @@ contract DualFallbackOracle is IAdapter {
         description = _description;
 
         if (PRIMARY_SOURCE.decimals() != FALLBACK_SOURCE.decimals()) revert InvalidDecimals();
-        if (PRIMARY_SOURCE.decimals() != EMERGENCY_SOURCE.decimals()) revert InvalidDecimals();
+        if (EMERGENCY_SOURCE != address(0) && PRIMARY_SOURCE.decimals() != EMERGENCY_SOURCE.decimals()) revert InvalidDecimals();
         decimals = PRIMARY_SOURCE.decimals();
     }
 
