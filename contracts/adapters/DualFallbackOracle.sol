@@ -57,6 +57,8 @@ contract DualFallbackOracle is IAdapter {
     error InvalidAddress();
     /// @notice thrown when there decimals are missmatched between oracles
     error InvalidDecimals();
+    /// @notice thrown if emergency oracle price is invalid
+    error InvalidEmergencyOracleData();
 
     /// @notice emitted when emergency oracle use is toggled
     event SetEnableEmergencyOracle(bool isEnabled);
@@ -130,7 +132,18 @@ contract DualFallbackOracle is IAdapter {
         uint80 answeredInRound
     ) {
         if (isEmergencyOracleEnabled && address(EMERGENCY_SOURCE) != address(0)){
-            return EMERGENCY_SOURCE.latestRoundData();
+            //if emergency latestRoundData, we want the tx to revert
+            (
+                uint80 _roundIdEmergency,
+                int256 _answerEmergency,
+                uint256 _startedAtEmergency,
+                uint256 _updatedAtEmergency,
+                uint80 _answeredInRoundEmergency
+            ) = EMERGENCY_SOURCE.latestRoundData();
+
+            if (_answerEmergency <= 0) revert InvalidEmergencyOracleData();
+
+            return (_roundIdEmergency, _answerEmergency, _startedAtEmergency, _updatedAtEmergency, _answeredInRoundEmergency);
         }
 
         (
