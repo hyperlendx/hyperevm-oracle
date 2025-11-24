@@ -92,7 +92,7 @@ contract DualFallbackOracle is IAdapter {
         description = _description;
 
         if (PRIMARY_SOURCE.decimals() != FALLBACK_SOURCE.decimals()) revert InvalidDecimals();
-        if (EMERGENCY_SOURCE != address(0) && PRIMARY_SOURCE.decimals() != EMERGENCY_SOURCE.decimals()) revert InvalidDecimals();
+        if (address(EMERGENCY_SOURCE) != address(0) && PRIMARY_SOURCE.decimals() != EMERGENCY_SOURCE.decimals()) revert InvalidDecimals();
         decimals = PRIMARY_SOURCE.decimals();
     }
 
@@ -134,17 +134,19 @@ contract DualFallbackOracle is IAdapter {
         }
 
         (
+            bool _success,
             uint80 _roundId,
             int256 _answer,
             uint256 _startedAt,
             uint256 _updatedAt,
             uint80 _answeredInRound
-        ) = PRIMARY_SOURCE.latestRoundData();
+        ) = _safeLatestRoundData(PRIMARY_SOURCE);
 
         //if primary isn't healthy, we first check if the fallback is also unhealthy
         //if both are unhealthy, we return primary prices
         //otherwise, we return fallback
-        if (!_isPrimaryHealthy(_answer, _updatedAt)){
+        if (!_isPrimaryHealthy(_success, _answer, _updatedAt)){
+            //we don't use _safeLatestRoundData here, since we want the tx to revert if both oracles revert
             (
                 uint80 _roundIdFallback,
                 int256 _answerFallback,
@@ -166,7 +168,31 @@ contract DualFallbackOracle is IAdapter {
         answeredInRound = _answeredInRound;
     }
 
-    function _isPrimaryHealthy(int256 _answer, uint256 _updatedAt) internal view returns (bool){
+    /// @notice calls latestRoundData on source contract, without reverting the whole tx if the call reverts
+    function _safeLatestRoundData(IOracle source) internal view returns (
+        bool success, 
+        uint80 r, 
+        int256 a, 
+        uint256 s, 
+        uint256 u, 
+        uint80 ar
+    ){
+        try source.latestRoundData() returns (
+            uint80 _r,
+            int256 _a,
+            uint256 _s,
+            uint256 _u,
+            uint80 _ar
+        ) {
+            return (true, _r, _a, _s, _u, _ar);
+        } catch {
+            return (false, 0, 0, 0, 0, 0);
+        }
+    }
+
+    function _isPrimaryHealthy(bool _success, int256 _answer, uint256 _updatedAt) internal view returns (bool){
+        if (!_success) return false; 
+
         if (_answer <= 0){
             return false;
         }
