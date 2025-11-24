@@ -168,7 +168,8 @@ contract DualFallbackOracle is IAdapter {
                 uint80 _answeredInRoundFallback
             ) = FALLBACK_SOURCE.latestRoundData();
 
-            if (_isFallbackHealthy(_answerFallback, _updatedAtFallback)){
+            //if fallback is also unhealthy, but data is less stale than primary, return fallback data
+            if (_isFallbackHealthy(_answerFallback, _updatedAtFallback) || _updatedAtFallback > _updatedAt){
                 return (_roundIdFallback, _answerFallback, _startedAtFallback, _updatedAtFallback, _answeredInRoundFallback);
             }
         }
