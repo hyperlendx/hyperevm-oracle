@@ -5,7 +5,7 @@ const fs = require("fs");
 //       '0x2F81b130ce13337f4eAc9e205E5eA710b492dbA4', '0x00038f83323b6b08116d1614cf33a9bd71ab5e0abf0c9f1b783a74a43e7bd992', 18, 'Chainlink-USDC/USD'
 //   ])
 
-async function verify(address, args, libraries){
+async function verify(address, args, libraries, contract){
     const params = {
         address: address,
         constructorArguments: args,
@@ -13,6 +13,10 @@ async function verify(address, args, libraries){
 
     if (libraries){
         params.libraries = libraries
+    }
+
+    if (contract){
+        params.contract = contract
     }
 
     try {
