@@ -2,6 +2,9 @@
 
 ---
 
+### Note: The majority of contracts in this repo were never used in production, and are therefore out of scope for bug bounties. Exceptions are certain `/adapters` and `/chainlink` contracts.
+
+
 HyperEVM oracle is used to read data from Hyperliquids System Oracle and serve it to HyperLend contracts in Chainlink-compatible* format:
 
 ---
